@@ -17,7 +17,6 @@ Description:
 import sys
 from QMainwindows import MainWindow
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QThread, QTimer, QObject, pyqtSignal
 from solve_data import *
 from Display_receive_data import *
 from Display_send_data import *

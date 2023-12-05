@@ -18,14 +18,13 @@ import time
 import random
 from QMainwindows import MainWindow
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QTimer, QObject, pyqtSignal, QCoreApplication
 from solve_data import *
 from Display_receive_data import *
 from Display_send_data import *
 
 
 # 轮数 为实际轮数减1
-number_set_all_round = 2
+number_set_all_round = 1
 
 
 def generate_random_msg1():
