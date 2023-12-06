@@ -153,7 +153,9 @@ def add_msg():
                             )
                             number_of_completed_classifications = 0
 
+                            bintype_save_map = [item for item in bintype_save_map if item]
                             item_save_map = [item for item in item_save_map if item]
+                            num_save_map = [item for item in num_save_map if item]
 
                             bintype_save_map.append([])
                             item_save_map.append([])

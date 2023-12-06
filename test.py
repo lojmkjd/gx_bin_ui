@@ -24,8 +24,9 @@ from Display_receive_data import *
 from Display_send_data import *
 
 
-# 轮数 为实际轮数减1
+# 设置轮数=per_and_round.txt的数量-1
 number_set_all_round = 4
+# 实际轮数比per_and_round.txt的数量少1
 
 
 def generate_random_msg1():
@@ -153,7 +154,9 @@ def add_msg():
                             )
                             number_of_completed_classifications = 0
 
+                            bintype_save_map = [item for item in bintype_save_map if item]
                             item_save_map = [item for item in item_save_map if item]
+                            num_save_map = [item for item in num_save_map if item]
 
                             bintype_save_map.append([])
                             item_save_map.append([])
@@ -185,7 +188,7 @@ def add_msg():
                                     ]
                                 ) + ","
 
-                            a_new_message = f"序号：{number_of_completed_round} 分类：{bintype_element_str} 物品：{item_element_str} 数量：{num_element_int} 分类状态：OK！"
+                            a_new_message = f"序号：{number_of_completed_round} 分类：{bintype_element_str} 物品：{item_element_str} 数量：{num_element_int} 分类状态:OK!"
                             w.msg_to_show=a_new_message
                             w.update_msg()
                             first_if_complished_container = second_if_complished_container
@@ -210,7 +213,7 @@ def add_msg():
    
         print(f"垃圾分类历史：{item_save_map}")
         print(f"垃圾分类时间：{round(time.time()-start,2)}s\n")
-        time.sleep(1)
+        time.sleep(0.2)
 
 
 # 4
