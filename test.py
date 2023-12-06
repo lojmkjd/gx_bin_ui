@@ -25,7 +25,7 @@ from Display_send_data import *
 
 
 # 轮数 为实际轮数减1
-number_set_all_round = 2
+number_set_all_round = 4
 
 
 def generate_random_msg1():
@@ -49,17 +49,17 @@ def generate_random_msg1():
 count=0
 def generate_random_msg3():
     global count
-    types = ["1","0","1","0","0","0","0","0","0","0"]
+    types = ["1","0"]
     msg3 = random.choice(types)
-    if msg3=="1":
-        count+=1
-        if count>1:
-            msg3="0"
-            count=0
-        else:
-            pass
-    else:
-        pass
+    # if msg3=="1":
+    #     count+=1
+    #     if count>1:
+    #         msg3="0"
+    #         count=0
+    #     else:
+    #         pass
+    # else:
+    #     pass
     return msg3
 
 
@@ -145,69 +145,71 @@ def add_msg():
             if "分类未完成" == first_if_complished_container:
                 if "分类已完成" == second_if_complished_container:
                     number_of_completed_classifications += 1
+                    try:
+                        if number_of_completed_classifications >= number_set_per_round:
+                            number_of_completed_round += 1
+                            number_set_per_round = int(
+                                per_and_round.get(str(number_of_completed_round))
+                            )
+                            number_of_completed_classifications = 0
 
-                    if number_of_completed_classifications >= number_set_per_round:
-                        number_of_completed_round += 1
-                        number_set_per_round = int(
-                            per_and_round.get(str(number_of_completed_round))
-                        )
-                        number_of_completed_classifications = 0
+                            item_save_map = [item for item in item_save_map if item]
 
-                        bintype_save_map.append([])
-                        item_save_map.append([])
-                        num_save_map.append([])
+                            bintype_save_map.append([])
+                            item_save_map.append([])
+                            num_save_map.append([])
 
-                        bintype_element_str = ""
-                        item_element_str = ""
-                        num_element_int = ""
-                        for a in range(
-                            int(per_and_round.get(str(number_of_completed_round - 1)))
-                        ):
-                            bintype_element_str = (
-                                bintype_element_str
-                                + bintype_save_map[number_of_completed_round - 1][
-                                    number_of_completed_classifications + a
-                                ]
-                            ) + ","
+                            bintype_element_str = ""
+                            item_element_str = ""
+                            num_element_int = ""
+                            for a in range(
+                                int(per_and_round.get(str(number_of_completed_round - 1)))
+                            ):
+                                bintype_element_str = (
+                                    bintype_element_str
+                                    + bintype_save_map[number_of_completed_round - 1][
+                                        number_of_completed_classifications + a
+                                    ]
+                                ) + ","
 
-                            item_element_str = (
-                                item_element_str
-                                + item_save_map[number_of_completed_round - 1][
-                                    number_of_completed_classifications + a
-                                ]
-                            ) + ","
-                            num_element_int = (
-                                num_element_int
-                                + num_save_map[number_of_completed_round - 1][
-                                    number_of_completed_classifications + a
-                                ]
-                            ) + ","
+                                item_element_str = (
+                                    item_element_str
+                                    + item_save_map[number_of_completed_round - 1][
+                                        number_of_completed_classifications + a
+                                    ]
+                                ) + ","
+                                num_element_int = (
+                                    num_element_int
+                                    + num_save_map[number_of_completed_round - 1][
+                                        number_of_completed_classifications + a
+                                    ]
+                                ) + ","
 
-                        a_new_message = f"序号：{number_of_completed_round} 分类：{bintype_element_str} 物品：{item_element_str} 数量：{num_element_int} 分类状态：OK！"
-                        w.msg_to_show=a_new_message
-                        w.update_msg()
-                        first_if_complished_container = second_if_complished_container
-                    else:
-                        # 测试用，使用时删
-                        # first_if_complished_container = "分类未完成"
-                        first_if_complished_container = second_if_complished_container
+                            a_new_message = f"序号：{number_of_completed_round} 分类：{bintype_element_str} 物品：{item_element_str} 数量：{num_element_int} 分类状态：OK！"
+                            w.msg_to_show=a_new_message
+                            w.update_msg()
+                            first_if_complished_container = second_if_complished_container
+                        else:
+                            # 测试用，使用时删
+                            # first_if_complished_container = "分类未完成"
+                            first_if_complished_container = second_if_complished_container
+                    except:
+                        number_of_completed_round -= 1        
 
                 else:
                     first_if_complished_container = second_if_complished_container
                     # 测试用，使用时删
-                    first_if_complished_container = "分类未完成"
+                    # first_if_complished_container = "分类未完成"
 
             else:
                 first_if_complished_container = second_if_complished_container
                 # 测试用，使用时删
-                first_if_complished_container = "分类未完成"
+                # first_if_complished_container = "分类未完成"
         else:
             pass
-
-        print(f"{item_save_map}")
-        end = time.time()
-        spend = end - start
-        print(f"{spend*1000} ms")
+   
+        print(f"垃圾分类历史：{item_save_map}")
+        print(f"垃圾分类时间：{round(time.time()-start,2)}s\n")
         time.sleep(1)
 
 
@@ -223,7 +225,7 @@ def update_fulled_value():
             bintype_element_str, fulled_element_int = solve_data_4(
                 str_list_len4, str_list4
             )
-            if fulled_element_int in (10,99):
+            if fulled_element_int in range(10,99):
 
                 if bintype_element_str == w.recyclable_bin_label.bin_type:
                     w.recyclable_bin_label.updateGoalValue(fulled_element_int)
@@ -239,10 +241,8 @@ def update_fulled_value():
                 pass
         else:
             pass
-        print(f"{item_save_map}")
-        end = time.time()
-        spend = end - start
-        print(f"{spend*1000} ms")
+        print(f"满载检测时间：{round(time.time()-start,2)}s\n")
+        time.sleep(1)
 
 
 if __name__ == "__main__":
@@ -250,15 +250,12 @@ if __name__ == "__main__":
     w = MainWindow()
     w.show()
 
-    # timer_update_full = threading.Thread(
-    #     target=update_fulled_value, name="满载检测", daemon=True
-    # )
-    # timer_update_full.start()
+    timer_update_full = threading.Thread(
+        target=update_fulled_value, name="满载检测", daemon=True
+    )
+    timer_update_full.start()
 
     timer_add_msg = threading.Thread(target=add_msg,name="信息更新",daemon=True)
     timer_add_msg.start()
-
-    # timer_add_msg = QTimer(w, timeout=add_msg)
-    # timer_add_msg.start()
 
     sys.exit(app.exec_())
