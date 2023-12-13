@@ -24,12 +24,14 @@ from Display_receive_data import *
 from Display_send_data import *
 
 
-# 轮数 为实际轮数减1
-number_set_all_round = 4
+# 设置轮数=per_and_round.txt的数量-1
+# 实际轮数=per_and_round.txt的数量-1
+# 设置轮数=实际轮数
+number_set_all_round = 10
 
 
 def generate_random_msg1():
-    types = ["A", "B","C","D","E" ]
+    types = ["A", "B", "C", "D", "E"]
 
     # Randomly choose a type
     trash_type = random.choice(types)
@@ -46,10 +48,13 @@ def generate_random_msg1():
 
     return msg1
 
-count=0
+
+count = 0
+
+
 def generate_random_msg3():
     global count
-    types = ["1","0"]
+    types = ["1", "0"]
     msg3 = random.choice(types)
     # if msg3=="1":
     #     count+=1
@@ -84,34 +89,36 @@ num_save_map = [[]]
 
 
 def receiv_new_litter():
-    # 测试用，使用时删除
-    test_strings1 = generate_random_msg1()
+    while 1:
+        # 测试用，使用时删除
+        test_strings1 = generate_random_msg1()
 
-    if test_strings1 is None:
-        test_strings1 = "E,-1,0"
+        if test_strings1 is None:
+            test_strings1 = "E,-1,0"
 
-    global first_item_containers, second_item_containers, number_of_completed_round
-    global bintype_save_map, item_save_map, num_save_map
+        global first_item_containers, second_item_containers, number_of_completed_round
+        global bintype_save_map, item_save_map, num_save_map
 
-    str_list_len1, str_list1 = Split_strings(test_strings1)
-    bintype_element_str, item_element_str, num_element_int = solve_data_1(
-        str_list_len1, str_list1
-    )
+        str_list_len1, str_list1 = Split_strings(test_strings1)
+        bintype_element_str, item_element_str, num_element_int = solve_data_1(
+            str_list_len1, str_list1
+        )
 
-    # display_touch_lower_computer.send(test_strings1[0])
+        # display_touch_lower_computer.send(test_strings1[0])
 
-    second_item_containers = item_element_str
-    if "无垃圾" == first_item_containers:
-        if "无垃圾" != second_item_containers:
-            bintype_save_map[number_of_completed_round].append(bintype_element_str)
-            item_save_map[number_of_completed_round].append(second_item_containers)
-            num_save_map[number_of_completed_round].append(num_element_int)
-            first_item_containers = second_item_containers
-            print(f"物品列表：{item_save_map},长度为：{len(item_save_map)}")
+        second_item_containers = item_element_str
+        if "无垃圾" == first_item_containers:
+            if "无垃圾" != second_item_containers:
+                bintype_save_map[number_of_completed_round].append(bintype_element_str)
+                item_save_map[number_of_completed_round].append(second_item_containers)
+                num_save_map[number_of_completed_round].append(num_element_int)
+                first_item_containers = second_item_containers
+                print(f"物品列表：{item_save_map},长度为：{len(item_save_map)}")
+            else:
+                first_item_containers = second_item_containers
         else:
             first_item_containers = second_item_containers
-    else:
-        first_item_containers = second_item_containers
+        time.sleep(1)
 
 
 per_and_round = dict_former(path="per_and_round.txt")
@@ -124,10 +131,11 @@ number_of_completed_classifications = 0
 number_set_per_round = int(per_and_round.get(str(0)))
 number_of_completed_round = 0
 
+
 def add_msg():
     while 1:
         start = time.time()
-        receiv_new_litter()
+        # receiv_new_litter()
         global first_if_complished_container, second_if_complished_container, number_of_completed_classifications, number_set_per_round, number_of_completed_round, number_set_all_round
         global bintype_save_map, item_save_map, num_save_map
         global per_and_round
@@ -153,7 +161,11 @@ def add_msg():
                             )
                             number_of_completed_classifications = 0
 
+                            bintype_save_map = [
+                                item for item in bintype_save_map if item
+                            ]
                             item_save_map = [item for item in item_save_map if item]
+                            num_save_map = [item for item in num_save_map if item]
 
                             bintype_save_map.append([])
                             item_save_map.append([])
@@ -163,7 +175,11 @@ def add_msg():
                             item_element_str = ""
                             num_element_int = ""
                             for a in range(
-                                int(per_and_round.get(str(number_of_completed_round - 1)))
+                                int(
+                                    per_and_round.get(
+                                        str(number_of_completed_round - 1)
+                                    )
+                                )
                             ):
                                 bintype_element_str = (
                                     bintype_element_str
@@ -185,16 +201,20 @@ def add_msg():
                                     ]
                                 ) + ","
 
-                            a_new_message = f"序号：{number_of_completed_round} 分类：{bintype_element_str} 物品：{item_element_str} 数量：{num_element_int} 分类状态：OK！"
-                            w.msg_to_show=a_new_message
+                            a_new_message = f"序号：{number_of_completed_round} 分类：{bintype_element_str} 物品：{item_element_str} 数量：{num_element_int} 分类状态:OK!"
+                            w.msg_to_show = a_new_message
                             w.update_msg()
-                            first_if_complished_container = second_if_complished_container
+                            first_if_complished_container = (
+                                second_if_complished_container
+                            )
                         else:
                             # 测试用，使用时删
                             # first_if_complished_container = "分类未完成"
-                            first_if_complished_container = second_if_complished_container
+                            first_if_complished_container = (
+                                second_if_complished_container
+                            )
                     except:
-                        number_of_completed_round -= 1        
+                        number_of_completed_round -= 1
 
                 else:
                     first_if_complished_container = second_if_complished_container
@@ -207,7 +227,7 @@ def add_msg():
                 # first_if_complished_container = "分类未完成"
         else:
             pass
-   
+
         print(f"垃圾分类历史：{item_save_map}")
         print(f"垃圾分类时间：{round(time.time()-start,2)}s\n")
         time.sleep(1)
@@ -225,8 +245,7 @@ def update_fulled_value():
             bintype_element_str, fulled_element_int = solve_data_4(
                 str_list_len4, str_list4
             )
-            if fulled_element_int in range(10,99):
-
+            if fulled_element_int in range(10, 99):
                 if bintype_element_str == w.recyclable_bin_label.bin_type:
                     w.recyclable_bin_label.updateGoalValue(fulled_element_int)
                 elif bintype_element_str == w.not_recyclable_bin_label.bin_type:
@@ -255,7 +274,12 @@ if __name__ == "__main__":
     )
     timer_update_full.start()
 
-    timer_add_msg = threading.Thread(target=add_msg,name="信息更新",daemon=True)
+    timer_add_msg = threading.Thread(target=add_msg, name="信息更新", daemon=True)
     timer_add_msg.start()
+
+    timer_receiv_new_litter = threading.Thread(
+        target=receiv_new_litter, name="接收新信息", daemon=True
+    )
+    timer_receiv_new_litter.start()
 
     sys.exit(app.exec_())
